@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPGEmu - Game Compatibility List</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --text-color: #212529;
+            --card-bg: #ffffff;
+            --border-color: #e9ecef;
+            --primary-color: #0d6efd;
+            --perfect-bg: #d1e7dd;
+            --perfect-color: #0f5132;
+            --playable-bg: #fff3cd;
+            --playable-color: #664d03;
+            --ingame-bg: #f8d7da;
+            --ingame-color: #842029;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #111;
+        }
+
+        .lang-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: opacity 0.2s;
+        }
+
+        .lang-btn:hover {
+            opacity: 0.9;
+        }
+
+        .disclaimer-card {
+            background-color: #fff9e6;
+            border: 1px solid #ffe58f;
+            border-left: 5px solid #faad14;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #595959;
+        }
+
+        .disclaimer-card h3 {
+            margin: 0 0 6px 0;
+            color: #d48806;
+            font-size: 0.95rem;
+        }
+
+        .disclaimer-card ul {
+            margin: 6px 0 0 0;
+            padding-left: 18px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px 14px;
+            margin-bottom: 20px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 0.95rem;
+        }
+
+        /* 桌面端默认表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f1f3f5;
+            font-weight: 600;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .badge-perfect { background-color: var(--perfect-bg); color: var(--perfect-color); }
+        .badge-playable { background-color: var(--playable-bg); color: var(--playable-color); }
+        .badge-ingame { background-color: var(--ingame-bg); color: var(--ingame-color); }
+
+        .contribute {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .contribute a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        /* 📱 手机端适配逻辑（核心改善） */
+        @media screen and (max-width: 600px) {
+            body { padding: 8px; }
+            .container { padding: 15px; }
+            h1 { font-size: 1.25rem; }
+
+            /* 隐藏表头 */
+            thead { display: none; }
+
+            /* 把 table、tbody、tr、td 全部强制改成块级元素 */
+            table, tbody, tr, td {
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            /* 每一行渲染成独立的卡片 */
+            tr {
+                margin-bottom: 15px;
+                background: #fff;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                padding: 10px 14px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            }
+
+            /* 卡片内部单元格样式 */
+            td {
+                padding: 6px 0;
+                border-bottom: 1px dashed var(--border-color);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                text-align: right;
+                font-size: 0.9rem;
+            }
+
+            td:last-child { border-bottom: none; }
+
+            /* 利用 ::before 动态插入“字段名称” */
+            td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #495057;
+                text-align: left;
+                padding-right: 10px;
+            }
+
+            /* 游戏名称特别高亮放大 */
+            td:first-child {
+                font-weight: bold;
+                font-size: 1rem;
+                color: var(--primary-color);
+                border-bottom: 2px solid var(--border-color);
+                padding-bottom: 8px;
+                margin-bottom: 4px;
+            }
+        }
+
+        /* 💡 玩家技巧/Notes 区域卡片样式 */
+        .tips-card {
+            background-color: #e6f7ff;
+            border: 1px solid #91d5ff;
+            border-left: 5px solid #1890ff;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            color: #262626;
+        }
+
+        .tips-card h3 {
+            margin: 0 0 6px 0;
+            color: #096dd9;
+            font-size: 0.95rem;
+        }
+
+        .tips-card ul {
+            margin: 6px 0 0 0;
+            padding-left: 18px;
+        }
+
+        .tips-card li {
+            margin-bottom: 4px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 id="title">⚡️ RPGEmu Compatibility List</h1>
+        <button class="lang-btn" onclick="toggleLanguage()" id="langBtn">中文</button>
+    </div>
+
+    <!-- 免责声明 -->
+    <div class="disclaimer-card">
+        <h3 id="discTitle">⚖️ Important Legal Notice & Disclaimer</h3>
+        <span id="discText">
+            This page provides a community-maintained compatibility reference for technical testing of RPGEmu.
+            <ul>
+                <li><strong>No Game Files Provided:</strong> RPGEmu does NOT host, package, or distribute any game files or ROMs.</li>
+                <li><strong>Trademark Ownership:</strong> All game titles and trademarks belong strictly to their respective owners.</li>
+                <li><strong>Non-Affiliation:</strong> RPGEmu is independent and NOT affiliated with any third-party publishers.</li>
+            </ul>
+        </span>
+    </div>
+
+    <!-- 2. 玩家技巧 Notes 区域 -->
+    <div class="tips-card">
+        <h3 id="notesTitle">💡 Pro-Tips for Playing Games on RPGEmu</h3>
+        <span id="notesText">
+            <ul>
+                <li><strong>MV Js error:</strong> If you find the screen "undefined...JS error", just restart the game or even restart the app, the issue will be solved.</li>
+                <li><strong>MV save lost / crash:</strong> If you find after you saved the game from game side, and exit the game, when restart the game, can not continue, please switch to low resolution 2x, to save memory.</li>
+                <li><strong>XP/VX/VXAce:</strong> Keep patching unless game crashed, we have bundled 10 patches for ruby games, almost 80% ruby games are supported to play indeed.</li>
+            </ul>
+        </span>
+    </div>
+
+    <input type="text" id="searchInput" class="search-box" placeholder="Search game title, engine, or status..." onkeyup="filterTable()">
+
+    <div class="table-wrapper">
+        <table id="compatTable">
+            <thead>
+                <tr>
+                    <th id="thName">Game Title</th>
+                    <th id="thEngine">Engine</th>
+                    <th id="thStatus">Status</th>
+                    <th id="thDevice">Tested Device / Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td data-label="Game Title">Fear & Hunger 2: Termina (Demo)</td>
+                    <td data-label="Engine">RPG Maker MV</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Perfect (60 FPS)</span></td>
+                    <td data-label="Tested Device / Notes">If "Undefined..." error, just restart the game or even restart the app will solve the issue</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">恐惧与饥饿2(Demo)</td>
+                    <td data-label="Engine">RPG Maker MV</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Perfect (60 FPS)</span></td>
+                    <td data-label="Tested Device / Notes">如果出现"Undefined..."错误, 重新启动游戏或者重启APP就好了，放心，这个问题要么不会出现，要么只出现一次</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">Infinite Fusion (Fan Game)</td>
+                    <td data-label="Engine">RPG Maker XP</td>
+                    <td data-label="Status"><span class="badge badge-playable">Playable (50+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">First time, game will patch controls itself, once patched, restart the game, you can enjoy the game then.</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">无限融合 (Fan Game)</td>
+                    <td data-label="Engine">RPG Maker XP</td>
+                    <td data-label="Status"><span class="badge badge-playable">Playable (50+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">游戏第一次启动可能会给自己的控制键打补丁，打完补丁，重启就好了。</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">Reborn (Fan Game)</td>
+                    <td data-label="Engine">RPG Maker XP</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">iPhone 16 Pro</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">Apostle Rebellion</td>
+                    <td data-label="Engine">RPG Maker MV</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">any error, restart the game will solve it, the error will only happen 0-1 time, and if touch pop out system video player, just finish the play and close it will be ok to continue</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">FFXI Braver</td>
+                    <td data-label="Engine">RPG Maker MV</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">iPhone 16 Pro</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">The Coffin of Andy and Leyley (3)</td>
+                    <td data-label="Engine">RPG Maker MV</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">Only TCOAAL 3 is supported, and language will be English only</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">Symphony_of_the_Serpent-.50121-Windows</td>
+                    <td data-label="Engine">RPG Maker MZ</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">Touch the screen always as you can, or else will throw "permission error"</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">A_Simple_Life_with_My_Unobtrusive_Sister-v0.9-beta</td>
+                    <td data-label="Engine">RPG Maker MV</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">must use desktop mode, and switch to low resolution 2x.</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">与存在感薄弱的妹妹简单生活</td>
+                    <td data-label="Engine">RPG Maker MV</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">必须开启桌面模式，然后降低分辨率2次才能运行，否则要么黑屏要么内存不足而崩溃，亲测iPhone 16 Pro上运行OK，虽然做饭的选项等黑框了，但能玩哈。去设置搞好按键映射Space空格键（闪步），B还是R回家传送门，继续游戏可能要摸黑继续，菜单就那么几个，摸清就好了。</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">TOD</td>
+                    <td data-label="Engine">RPG Maker MV</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">iPhone 16 Pro</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">Karry Prision</td>
+                    <td data-label="Engine">RPG Maker MV</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">must switch to low resolution 2x to save memory, or else will crash as OOM(out of memory)</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">卡琳监狱</td>
+                    <td data-label="Engine">RPG Maker MV</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">必须降低分辨率2次，否则游戏后续会因为内存不足而崩溃</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">YARISUTEMESUBUTA v3.08</td>
+                    <td data-label="Engine">RPG Maker MV</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">iPhone 16 Pro</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">Acrylic</td>
+                    <td data-label="Engine">RPG Maker MV</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">iPhone 16 Pro</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">Turtle Head</td>
+                    <td data-label="Engine">RPG Maker MV</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">iPhone 16 Pro</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">Futa_Family_V0.2.42_II</td>
+                    <td data-label="Engine">RPG Maker MV</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">iPhone 16 Pro</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">Dragon</td>
+                    <td data-label="Engine">RPG Maker MZ</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">iPhone 16 Pro</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">Haven v.6.0.5</td>
+                    <td data-label="Engine">RPG Maker MZ</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">iPhone 16 Pro</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">BLACK_SOULS_II-1.3</td>
+                    <td data-label="Engine">RPG Maker VXAce</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">iPhone 16 Pro</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">Fire Ash 3.6 Part 2</td>
+                    <td data-label="Engine">RPG Maker XP</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">iPhone 16 Pro</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">Pathways 9.0.3 Alpha Release</td>
+                    <td data-label="Engine">RPG Maker XP</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">iPhone 16 Pro</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">Solar Eclipse</td>
+                    <td data-label="Engine">RPG Maker XP</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">iPhone 16 Pro</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">Hydro Bliss 2.13.4</td>
+                    <td data-label="Engine">RPG Maker XP</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">will apply patches automatically, once patched, restart the app to continue</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">Decay 1.2.3</td>
+                    <td data-label="Engine">RPG Maker XP</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">iPhone 16 Pro</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">TGOM 4.2.2</td>
+                    <td data-label="Engine">RPG Maker XP</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">will apply patches automatically, once patched, restart the app to continue</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">Bloodstained-hands-v5.9.8</td>
+                    <td data-label="Engine">RPG Maker XP</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">will apply patches automatically, once patched, restart the app to continue</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">Pocket Mirror ver.1.3</td>
+                    <td data-label="Engine">RPG Maker XP</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">iPhone 16 Pro</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">Star Stealing Prince 3.4 w-RTP</td>
+                    <td data-label="Engine">RPG Maker XP</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">will apply patches automatically, once patched, restart the app to continue</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">XP_palc_魂晶前傳～創世紀戰爭.</td>
+                    <td data-label="Engine">RPG Maker XP</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">会自动应用补丁，每当补丁完成，重启APP继续就好了</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">VA_阿強_魔塔傳記</td>
+                    <td data-label="Engine">RPG Maker XP</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">会自动应用补丁，每当补丁完成，重启APP继续就好了</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">Echo+Static+Build+(v1.6.2)</td>
+                    <td data-label="Engine">RPG Maker XP</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">please set key map in settings, so you can get "Z" key to pop up menu</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">MiseryBlack</td>
+                    <td data-label="Engine">RPG Maker XP</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">will apply patches automatically, once patched, restart the app to continue</td>
+                </tr>
+                <tr>
+                    <td data-label="Game Title">BLACK SOULS</td>
+                    <td data-label="Engine">RPG Maker XP</td>
+                    <td data-label="Status"><span class="badge badge-perfect">Playable (60+ FPS)</span></td>
+                    <td data-label="Tested Device / Notes">iPhone 16 Pro</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="contribute">
+        <p id="contribText">💡 Want to contribute your test results? Feel free to submit a Pull Request or open an Issue on our <a href="https://github.com/gzqyl/rpgemu-compatibility-list" target="_blank">GitHub Repository</a>.</p>
+    </div>
+</div>
+
+<script>
+    let currentLang = 'en';
+
+    const translations = {
+        en: {
+            title: "⚡️ RPGEmu Compatibility List",
+            langBtn: "中文",
+            discTitle: "⚖️ Important Legal Notice & Disclaimer",
+            discText: `This page provides a community-maintained compatibility reference for technical testing of RPGEmu.
+            <ul>
+                <li><strong>No Game Files Provided:</strong> RPGEmu does NOT host, package, or distribute any game files or ROMs.</li>
+                <li><strong>Trademark Ownership:</strong> All game titles and trademarks belong strictly to their respective owners.</li>
+                <li><strong>Non-Affiliation:</strong> RPGEmu is independent and NOT affiliated with any third-party publishers.</li>
+            </ul>`,
+            notesTitle: "💡 Pro-Tips for Playing Games on RPGEmu",
+            notesText: `<ul>
+                <li><strong>MV Js error:</strong> If you find the screen "undefined...JS error", just restart the game or even restart the app, the issue will be solved.</li>
+                <li><strong>MV save lost / crash:</strong> If you find after you saved the game from game side, and exit the game, when restart the game, can not continue, please switch to low resolution 2x, to save memory.</li>
+                <li><strong>XP/VX/VXAce:</strong> Keep patching unless game crashed, we have bundled 10 patches for ruby games, almost 80% ruby games are supported to play indeed.</li>
+            </ul>`,
+            searchPlaceholder: "Search game title, engine, or status...",
+            thName: "Game Title",
+            thEngine: "Engine",
+            thStatus: "Status",
+            thDevice: "Tested Device / Notes",
+            contribText: '💡 Want to contribute your test results? Feel free to submit a Pull Request or open an Issue on our <a href="https://github.com/gzqyl/rpgemu-compatibility-list" target="_blank">GitHub Repository</a>.'
+        },
+        zh: {
+            title: "⚡️ RPGEmu 兼容性测试",
+            langBtn: "English",
+            discTitle: "⚖️ 重要法律提示与免责声明",
+            discText: `本页面仅为 RPGEmu 技术测试提供社区维护的兼容性参考。
+            <ul>
+                <li><strong>不提供游戏文件：</strong> RPGEmu 不托管、打包或分发任何游戏文件或 ROM。</li>
+                <li><strong>商标归属：</strong> 所有游戏名称与商标完全归原版权所有者所有。</li>
+                <li><strong>无官方关联：</strong> RPGEmu 为独立项目，与任何第三方游戏发行商均无任何直接或间接的商业关联或授权关系。</li>
+            </ul>`,
+            notesTitle: "💡 RPGEmu 游戏运行小贴士",
+            notesText: `<ul>
+                <li><strong>MV Js错误:</strong> 如果发现"undefined...JS error"JS错误, 重启游戏或者重启APP即可解决此问题，偶尔第一次加载游戏会有此问题，暂时不明原因，因为第二次重复操作错误根本不会重现，有点奇怪，但不管它，重启即可解决.</li>
+                <li><strong>MV存储进度丢失/崩溃:</strong>此种情况，必然要将分辨率降低2次，减少内存占用，否则保存的时候内核已经崩溃了，自然保存不到数据，对于大型游戏，降低分辨率2次如果还能玩，最好就降低2次，以稳定运行.</li>
+                <li><strong>XP/VX/VXAce:</strong> 持续打补丁，除非游戏提示崩溃了，否则，打完补丁重启就好了。我们内置了10来个补丁，几乎能运行80%的XP龙头游戏。</li>
+            </ul>`,
+            searchPlaceholder: "搜索游戏名称、引擎或运行状态...",
+            thName: "游戏名称",
+            thEngine: "引擎类型",
+            thStatus: "运行状态",
+            thDevice: "测试设备 / 备注",
+            contribText: '💡 想提交您的测试结果？欢迎前往我们的 <a href="https://github.com/gzqyl/rpgemu-compatibility-list" target="_blank">GitHub 仓库</a> 提交 Pull Request 或 Issue。'
+        }
+    };
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'en' ? 'zh' : 'en';
+        const t = translations[currentLang];
+
+        document.getElementById('title').innerText = t.title;
+        document.getElementById('langBtn').innerText = t.langBtn;
+        document.getElementById('discTitle').innerText = t.discTitle;
+        document.getElementById('discText').innerHTML = t.discText;
+        document.getElementById('searchInput').placeholder = t.searchPlaceholder;
+        document.getElementById('thName').innerText = t.thName;
+        document.getElementById('thEngine').innerText = t.thEngine;
+        document.getElementById('thStatus').innerText = t.thStatus;
+        document.getElementById('thDevice').innerText = t.thDevice;
+        document.getElementById('contribText').innerHTML = t.contribText;
+        document.getElementById('notesTitle').innerText = t.notesTitle;
+        document.getElementById('notesText').innerHTML = t.notesText;
+
+        // 更新手机端卡片里的左侧标签文字
+        const rows = document.querySelectorAll('#compatTable tbody tr');
+        rows.forEach(row => {
+            const tds = row.querySelectorAll('td');
+            if(tds.length === 4) {
+                tds[0].setAttribute('data-label', t.thName);
+                tds[1].setAttribute('data-label', t.thEngine);
+                tds[2].setAttribute('data-label', t.thStatus);
+                tds[3].setAttribute('data-label', t.thDevice);
+            }
+        });
+    }
+
+    function filterTable() {
+        const input = document.getElementById("searchInput");
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById("compatTable");
+        const tr = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < tr.length; i++) {
+            let rowText = tr[i].textContent || tr[i].innerText;
+            if (rowText.toLowerCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
